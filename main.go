@@ -24,6 +24,10 @@ func main() {
 
 	instruction := cli.Parse(os.Args[1:])
 
+    if instruction == "" {
+        cli.Error(fmt.Errorf("Instruction is empty"), true)
+    }
+
 	key := os.Getenv("OPENAI_API_KEY")
 	if key == "" {
 		cli.Error(fmt.Errorf("OPENAI_API_KEY environment variable not set"), true)
