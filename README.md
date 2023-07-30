@@ -21,6 +21,16 @@ go install github.com/sett17/ai-shell`
 
 I've also got pre-compiled binaries for you. Just head over to the [Releases](https://github.com/sett17/ai-shell/releases) page, download the version you need, and you're good to go.
 
+### Use `ai` instead of `ai-shell`
+
+If you are in a unix system you can easily create an `ai` symlink for `ai-shell`.
+
+```bash
+ln -s ~/go/bin/ai-shell ~/go/bin/ai
+```
+
+*Or whatever your `GOPATH` is when looking up `go env` :)*
+
 ## Configuration
 
 ai-shell uses a configuration file (`config.toml`) to customize its behavior. By default, this file is located in the local configuration directory for your system:
