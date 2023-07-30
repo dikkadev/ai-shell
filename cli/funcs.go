@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/i582/cfmt/cmd/cfmt"
@@ -9,18 +8,16 @@ import (
 
 func help(_ string) error {
 	cfmt.Printf(`
-{{Usage:}}::underline dev [OPTIONS] OPERATIONS+ARGUMENT..
+{{Usage:}}::underline ai-shell [options] instruction
+
 `)
-	fmt.Println(Logo)
+
 	cfmt.Printf(`
-Tired of the weird quirks of make? Annoyed of making typos in long chained
-commands, or getting to them via reverse-i-search? Well, here is a solution
-that comes as just an executable for each platform and with an extensive
-help command.
+This is a command-line tool that uses OpenAI's GPT-3.5-turbo to generate precise console commands based on your instructions. It takes in your commands, gathers some context, and lets an AI model figure out the best course of action.
+`)
 
-{{Operation Options:}}::underline
- These options can be used as letters in the Devfile
-
+	cfmt.Printf(`
+{{It is recommended to create a symlink called ai to the ai-shell executable}}::bgYellow|black
 `)
 
 	cfmt.Printf(`
@@ -28,17 +25,11 @@ help command.
 {{Options:}}::underline
 `)
 	for _, arg := range ProgArgs {
-		cfmt.Printf("  {{-%s}}::purple, {{--%s}}::purple\t{{%s}}::gray\n", arg.Short, arg.Long, arg.Help)
+		cfmt.Printf("  {{-%s}}::green, {{--%s}}::green\t{{%s}}::gray\n", arg.Short, arg.Long, arg.Help)
 	}
-	cfmt.Printf("  {{-%s}}::purple, {{--%s}}::purple\t{{%s}}::gray\n", "h", "help", "Show this help message")
-	cfmt.Printf("  {{-%s}}::purple, {{--%s}}::purple\t{{%s}}::gray\n", VersionProgArg.Short, VersionProgArg.Long, VersionProgArg.Help)
+	cfmt.Printf("  {{-%s}}::green, {{--%s}}::green\t{{%s}}::gray\n", "h", "help", "Show this help message")
+	cfmt.Printf("  {{-%s}}::green, {{--%s}}::green\t{{%s}}::gray\n", VersionProgArg.Short, VersionProgArg.Long, VersionProgArg.Help)
 
-	cfmt.Printf(`
-
-{{Operations:}}::underline
-  {{OPERATIONS+ARGUMENT...}}::purple  {{Which operation to execute.}}::gray
-                          {{Arguments should be in same order as in Devfile}}::gray
-`)
 	os.Exit(0)
-    return nil
+	return nil
 }
