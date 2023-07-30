@@ -3,6 +3,8 @@ package context
 import (
 	"fmt"
 	"os"
+	"runtime"
+	"strings"
 
 	ai "github.com/sashabaranov/go-openai"
 )
@@ -42,7 +44,16 @@ func (s Shell) Name() string {
 }
 
 func (s *Shell) Build() (msg ai.ChatCompletionMessage, err error) {
-	s.Content = os.Getenv("SHELL")
+	if runtime.GOOS != "windows" {
+		s.Content = os.Getenv("SHELL")
+	} else {
+		if shell := os.Getenv("ComSpec"); shell != "" {
+			shellSlice := strings.Split(shell, "\\")
+			s.Content = shellSlice[len(shellSlice)-1]
+		} else {
+			s.Content = "PowerShell"
+		}
+	}
 
 	msg = ai.ChatCompletionMessage{
 		Role:    ai.ChatMessageRoleUser,
