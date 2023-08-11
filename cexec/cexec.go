@@ -8,6 +8,7 @@ import (
 type Executor interface {
     Create(content string) error
     Execute() error
+    Edit() error
 }
 
 func ChooseExecutor() Executor {

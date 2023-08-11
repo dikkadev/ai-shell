@@ -29,6 +29,9 @@ func Warning(msg string) {
 }
 
 func Error(err error, exit bool) {
+    if err == nil {
+        return
+    }
 	cfmt.Printf("{{ERROR:}}::bgRed\n{{%s}}::red\n", err.Error())
 	if exit {
 		os.Exit(1)

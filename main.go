@@ -22,12 +22,13 @@ func main() {
 		cli.Error((fmt.Errorf("Error while decoding config (try deleting it)\n%w", err)), true)
 	}
 	global.Cfg = cfg
+    cli.ParseForDebug(os.Args[1:])
 
 	instruction := cli.Parse(os.Args[1:])
 
-    if instruction == "" {
-        cli.Error(fmt.Errorf("Instruction is empty"), true)
-    }
+	if instruction == "" {
+		cli.Error(fmt.Errorf("Instruction is empty"), true)
+	}
 
 	key := os.Getenv("OPENAI_API_KEY")
 	if key == "" {
@@ -37,23 +38,19 @@ func main() {
 	chat := chat.New(instruction, key)
 
 	chat.AddContext(context.NewFileListing(global.Cfg.FileListingConfig))
-    chat.AddContext(context.NewShell(global.Cfg.ShellConfig))
+	chat.AddContext(context.NewShell(global.Cfg.ShellConfig))
 
 	isRevision := false
 	revision := ""
-    loop:
+loop:
 	for {
-        cmd := ""
+		cmd := ""
 		if isRevision {
 			cmd, err = chat.Revise(revision)
-			if err != nil {
-				cli.Error(err, true)
-			}
+			cli.Error(err, true)
 		} else {
 			cmd, err = chat.Execute()
-			if err != nil {
-				cli.Error(err, true)
-			}
+			cli.Error(err, true)
 		}
 
 		answers := struct {
@@ -72,25 +69,25 @@ func main() {
 				},
 			},
 			&answers)
-		if err != nil {
-			cli.Error(err, true)
-		}
+		cli.Error(err, true)
 
 		switch answers.Task {
 		case "Execute":
-            executor := cexec.ChooseExecutor()
-            err := executor.Create(cmd)
-            if err != nil {
-                cli.Error(err, true)
-            }
-            err = executor.Execute()
-            if err != nil {
-                cli.Error(err, true)
-            }
-            break loop
+			executor := cexec.ChooseExecutor()
+			err := executor.Create(cmd)
+			cli.Error(err, true)
+			err = executor.Execute()
+			cli.Error(err, true)
+			break loop
 		case "Edit & Execute":
-            cli.Warning("Not implemented yet, sorry")
-            break loop
+			executor := cexec.ChooseExecutor()
+			err := executor.Create(cmd)
+			cli.Error(err, true)
+			err = executor.Edit()
+			cli.Error(err, true)
+			err = executor.Execute()
+			cli.Error(err, true)
+			break loop
 		case "Revise":
 			isRevision = true
 			answers := struct {
@@ -104,10 +101,8 @@ func main() {
 					},
 				},
 				&answers)
-            if err != nil {
-                cli.Error(err, true)
-            }
-            revision = answers.Revision
+			cli.Error(err, true)
+			revision = answers.Revision
 		}
 
 	}
