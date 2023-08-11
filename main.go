@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/sett17/ai-shell/cexec"
 	"github.com/sett17/ai-shell/chat"
 	"github.com/sett17/ai-shell/cli"
 	"github.com/sett17/ai-shell/config"
@@ -77,7 +78,12 @@ func main() {
 
 		switch answers.Task {
 		case "Execute":
-            err := ExecuteCommand(cmd)
+            executor := cexec.ChooseExecutor()
+            err := executor.Create(cmd)
+            if err != nil {
+                cli.Error(err, true)
+            }
+            err = executor.Execute()
             if err != nil {
                 cli.Error(err, true)
             }
