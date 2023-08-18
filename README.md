@@ -14,7 +14,7 @@ If you have Go set up on your machine, it's a breeze. Just use the following com
 
 
 ```bash
-go install github.com/sett17/ai-shell` 
+go install github.com/sett17/ai-shell@latest
 ```
 
 ### Option 2: Grab the Binary
