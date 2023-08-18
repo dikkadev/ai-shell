@@ -7,35 +7,34 @@ import (
 	"github.com/sett17/ai-shell/cli"
 )
 
-
-type BashExecutor struct {
+type PwshExecutor struct {
     file string
 }
 
-func (b *BashExecutor) Create(content string) error {
-    f, err := os.CreateTemp("", "ai-shell*.sh")
+func (p *PwshExecutor) Create(content string) error {
+    f, err := os.CreateTemp("", "ai-shell*.ps1")
     if err != nil {
         return err
     }
     cli.Dbg("Created temp file: " + f.Name())
     defer f.Close()
-    b.file = f.Name()
+    p.file = f.Name()
 
-    _, err = f.WriteString("shopt -s expand_aliases\n" + content)
+    _, err = f.WriteString(content)
     return err
 }
 
-func (b *BashExecutor) Execute() error {
-    _, err := os.Stat(b.file)
+func (p *PwshExecutor) Execute() error {
+    _, err := os.Stat(p.file)
     if os.IsNotExist(err) {
         return err
     }
 
     defer func() {
-        os.Remove(b.file)
-        cli.Dbg("Removed temp file: " + b.file)
+        os.Remove(p.file)
+        cli.Dbg("Removed temp file: " + p.file)
     }()
-    cmd := exec.Command("/bin/bash", "-e", b.file)
+    cmd := exec.Command("pwsh", "-File", p.file)
     cmd.Stdout = os.Stdout
     cmd.Stderr = os.Stderr
 
@@ -43,11 +42,11 @@ func (b *BashExecutor) Execute() error {
     return cmd.Run()
 }
 
-func (b *BashExecutor) Edit() error {
+func (p *PwshExecutor) Edit() error {
     editor := os.Getenv("EDITOR")
     if editor == "" {
-        editor = "vim"
+        editor = "notepad.exe"
     }
     cli.Dbg("Editing script file with " + editor)
-    return exec.Command(editor, b.file).Run()
+    return exec.Command(editor, p.file).Run()
 }

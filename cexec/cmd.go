@@ -7,7 +7,6 @@ import (
 	"github.com/sett17/ai-shell/cli"
 )
 
-
 type CmdExecutor struct {
     file string
 }
@@ -26,6 +25,11 @@ func (c *CmdExecutor) Create(content string) error {
 }
 
 func (c *CmdExecutor) Execute() error {
+    _, err := os.Stat(c.file)
+    if os.IsNotExist(err) {
+        return err
+    }
+
     defer func() {
         os.Remove(c.file)
         cli.Dbg("Removed temp file: " + c.file)
@@ -40,7 +44,11 @@ func (c *CmdExecutor) Execute() error {
 
 
 func (c *CmdExecutor) Edit() error {
-    cli.Dbg("Editing script file with notepad")
-    return exec.Command("notepad.exe", c.file).Run()
+    editor := os.Getenv("EDITOR")
+    if editor == "" {
+        editor = "notepad.exe"
+    }
+    cli.Dbg("Editing script file with " + editor)
+    return exec.Command(editor, c.file).Run()
 }
 

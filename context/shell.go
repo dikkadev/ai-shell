@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	ai "github.com/sashabaranov/go-openai"
+	"github.com/shirou/gopsutil/process"
 )
 
 type Shell struct {
@@ -45,13 +46,31 @@ func (s Shell) Name() string {
 
 func (s *Shell) Build() (msg ai.ChatCompletionMessage, err error) {
 	if runtime.GOOS != "windows" {
-		s.Content = os.Getenv("SHELL")
+        s.Content = os.Getenv("SHELL")
 	} else {
-		if shell := os.Getenv("ComSpec"); shell != "" {
-			shellSlice := strings.Split(shell, "\\")
-			s.Content = shellSlice[len(shellSlice)-1]
+		p, err := process.NewProcess(int32(os.Getpid()))
+		if err != nil {
+			panic(err)
+		}
+
+		ppid, err := p.Ppid()
+		if err != nil {
+			panic(err)
+		}
+		pp, err := process.NewProcess(ppid)
+		if err != nil {
+			panic(err)
+		}
+
+		name, err := pp.Name()
+		if err != nil {
+			panic(err)
+		}
+
+		if strings.Contains(strings.ToLower(name), "pwsh") {
+            s.Content = "Powershell"
 		} else {
-			s.Content = "PowerShell"
+            s.Content = "cmd"
 		}
 	}
 

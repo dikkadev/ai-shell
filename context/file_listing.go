@@ -23,7 +23,6 @@ var DEFAULT_FILE_LISTING_CONFIG = FileListingConfig{
 	},
 }
 
-// Returns a new FileListing context item with empty content
 func NewFileListing(cfg FileListingConfig) (*FileListing, error) {
 	if cfg.Enabled {
 		return &FileListing{
@@ -43,7 +42,6 @@ func (f FileListing) Name() string {
     return f.ItemBase.Name
 }
 
-// Fills content of FileListing and returns message
 func (f *FileListing) Build() (msg ai.ChatCompletionMessage, err error) {
 	content := ""
 

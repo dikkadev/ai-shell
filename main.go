@@ -22,7 +22,7 @@ func main() {
 		cli.Error((fmt.Errorf("Error while decoding config (try deleting it)\n%w", err)), true)
 	}
 	global.Cfg = cfg
-    cli.ParseForDebug(os.Args[1:])
+	cli.ParseForDebug(os.Args[1:])
 
 	instruction := cli.Parse(os.Args[1:])
 
@@ -39,6 +39,8 @@ func main() {
 
 	chat.AddContext(context.NewFileListing(global.Cfg.FileListingConfig))
 	chat.AddContext(context.NewShell(global.Cfg.ShellConfig))
+
+	executor := cexec.ChooseExecutor()
 
 	isRevision := false
 	revision := ""
@@ -73,14 +75,12 @@ loop:
 
 		switch answers.Task {
 		case "Execute":
-			executor := cexec.ChooseExecutor()
 			err := executor.Create(cmd)
 			cli.Error(err, true)
 			err = executor.Execute()
 			cli.Error(err, true)
 			break loop
 		case "Edit & Execute":
-			executor := cexec.ChooseExecutor()
 			err := executor.Create(cmd)
 			cli.Error(err, true)
 			err = executor.Edit()
