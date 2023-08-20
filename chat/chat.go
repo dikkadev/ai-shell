@@ -88,6 +88,13 @@ func stripAnswer(cmd string) string {
     cmd = strings.TrimPrefix(cmd, "Suggested Command")
     cmd = strings.TrimPrefix(cmd, "Suggested command")
     cmd = strings.TrimPrefix(cmd, "suggested command")
+    cmd = strings.TrimPrefix(cmd, "Instruction")
+    cmd = strings.TrimPrefix(cmd, "instruction")
+    cmd = strings.TrimPrefix(cmd, "Instr")
+    cmd = strings.TrimPrefix(cmd, "instr")
+    cmd = strings.TrimPrefix(cmd, "Suggested Instruction")
+    cmd = strings.TrimPrefix(cmd, "Suggested instruction")
+    cmd = strings.TrimPrefix(cmd, "suggested instruction")
     cmd = strings.TrimLeft(cmd, ": ")
     return cmd
 }
