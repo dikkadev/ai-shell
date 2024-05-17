@@ -1,0 +1,110 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Update version.go
+        run: |
+          version="${{ github.event.inputs.version }}"
+          echo "Updating version to $version"
+          sed -i.bak "s/const Version = \".*\"/const Version = \"$version\"/" global/version.go
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add global/version.go
+          git commit -m "Update version to $version"
+          git tag -a "$version" -m "Release $version"
+          git push origin $version
+
+build:
+    needs: update-version
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            ext: ""
+            file: "ai-linux"
+            artifact_name: "ubuntu-latest-binary"
+            shell: bash
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            ext: ""
+            file: "ai-macos"
+            artifact_name: "macos-latest-binary"
+            shell: bash
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            ext: ".exe"
+            file: "ai-windows.exe"
+            artifact_name: "windows-latest-binary"
+            shell: cmd
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      
+      - name: Build binary
+        run: |
+          ${{ matrix.goos }}=${{ matrix.goos }} ${{ matrix.goarch }}=${{ matrix.goarch }} go build -o release/${{ matrix.file }}${{ matrix.ext }}
+        shell: ${{ matrix.shell }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: release/*
+
+  release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Ubuntu artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ubuntu-latest-binary
+          path: release/
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-latest-binary
+          path: release/
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-latest-binary
+          path: release/
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          body: |
+            Release ${{ github.event.inputs.version }}
+          artifacts: |
+            release/ai-linux
+            release/ai-macos
+            release/ai-windows.exe
+
