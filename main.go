@@ -11,6 +11,7 @@ import (
 	"github.com/sett17/ai-shell/config"
 	"github.com/sett17/ai-shell/context"
 	"github.com/sett17/ai-shell/global"
+	"golang.design/x/clipboard"
 )
 
 func main() {
@@ -65,7 +66,7 @@ loop:
 					Name: "task",
 					Prompt: &survey.Select{
 						Message: "What to do now?",
-						Options: []string{"Execute", "Edit & Execute", "Revise"},
+						Options: []string{"Execute", "Copy", "Edit & Execute", "Revise"},
 						Default: "Execute",
 					},
 				},
@@ -79,6 +80,18 @@ loop:
 			cli.Error(err, true)
 			err = executor.Execute()
 			cli.Error(err, true)
+			if err == nil {
+				err = executor.AddToHistory(cmd)
+				cli.Error(err, true)
+			}
+			break loop
+		case "Copy":
+			err := clipboard.Init()
+			if err != nil {
+				cli.Error(err, true)
+			}
+			clipboard.Write(clipboard.FmtText, []byte(cmd))
+			cli.Info("Copied to clipboard: " + cmd)
 			break loop
 		case "Edit & Execute":
 			err := executor.Create(cmd)
@@ -87,6 +100,10 @@ loop:
 			cli.Error(err, true)
 			err = executor.Execute()
 			cli.Error(err, true)
+			if err == nil {
+				err = executor.AddToHistory(cmd)
+				cli.Error(err, true)
+			}
 			break loop
 		case "Revise":
 			isRevision = true

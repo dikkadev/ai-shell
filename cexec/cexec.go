@@ -13,6 +13,7 @@ type Executor interface {
 	Create(content string) error
 	Execute() error
 	Edit() error
+	AddToHistory(string) error
 }
 
 func ChooseExecutor() Executor {

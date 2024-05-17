@@ -1,14 +1,15 @@
 package cli
 
 import (
-	"github.com/sett17/ai-shell/global"
-	"github.com/i582/cfmt/cmd/cfmt"
 	"os"
 	"strings"
+
+	"github.com/i582/cfmt/cmd/cfmt"
+	"github.com/sett17/ai-shell/global"
 )
 
 func printPrefix() {
-	cfmt.Print("{{AI:}}::lightBlue ")
+	// cfmt.Print("{{AI:}}::lightBlue ")
 }
 
 func Dbg(msg string) {
@@ -29,9 +30,9 @@ func Warning(msg string) {
 }
 
 func Error(err error, exit bool) {
-    if err == nil {
-        return
-    }
+	if err == nil {
+		return
+	}
 	cfmt.Printf("{{ERROR:}}::bgRed\n{{%s}}::red\n", err.Error())
 	if exit {
 		os.Exit(1)
