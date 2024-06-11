@@ -16,8 +16,8 @@ type Chat struct {
 	Context     []context.Item
 	Instruction string
 
-	client      *ai.Client
-    messages    []ai.ChatCompletionMessage
+	client   *ai.Client
+	messages []ai.ChatCompletionMessage
 }
 
 func New(instruction string, token string) Chat {
@@ -70,10 +70,9 @@ func (c *Chat) Execute() (string, error) {
 		return "", err
 	}
 	sw.Stop()
-    strippedMessage := resp.Choices[0].Message
-    strippedMessage.Content = stripAnswer(strippedMessage.Content)
-    c.messages = append(c.messages, strippedMessage)
-
+	strippedMessage := resp.Choices[0].Message
+	strippedMessage.Content = stripAnswer(strippedMessage.Content)
+	c.messages = append(c.messages, strippedMessage)
 
 	fmt.Printf("\033[100m%s\033[0m\n", strippedMessage.Content)
 
@@ -81,51 +80,51 @@ func (c *Chat) Execute() (string, error) {
 }
 
 func stripAnswer(cmd string) string {
-    cmd = strings.TrimPrefix(cmd, "Command")
-    cmd = strings.TrimPrefix(cmd, "command")
-    cmd = strings.TrimPrefix(cmd, "Cmd")
-    cmd = strings.TrimPrefix(cmd, "cmd")
-    cmd = strings.TrimPrefix(cmd, "Suggested Command")
-    cmd = strings.TrimPrefix(cmd, "Suggested command")
-    cmd = strings.TrimPrefix(cmd, "suggested command")
-    cmd = strings.TrimPrefix(cmd, "Instruction")
-    cmd = strings.TrimPrefix(cmd, "instruction")
-    cmd = strings.TrimPrefix(cmd, "Instr")
-    cmd = strings.TrimPrefix(cmd, "instr")
-    cmd = strings.TrimPrefix(cmd, "Suggested Instruction")
-    cmd = strings.TrimPrefix(cmd, "Suggested instruction")
-    cmd = strings.TrimPrefix(cmd, "suggested instruction")
-    cmd = strings.TrimLeft(cmd, ": ")
-    return cmd
+	cmd = strings.TrimPrefix(cmd, "Command")
+	cmd = strings.TrimPrefix(cmd, "command")
+	cmd = strings.TrimPrefix(cmd, "Cmd")
+	cmd = strings.TrimPrefix(cmd, "cmd")
+	cmd = strings.TrimPrefix(cmd, "Suggested Command")
+	cmd = strings.TrimPrefix(cmd, "Suggested command")
+	cmd = strings.TrimPrefix(cmd, "suggested command")
+	cmd = strings.TrimPrefix(cmd, "Instruction")
+	cmd = strings.TrimPrefix(cmd, "instruction")
+	cmd = strings.TrimPrefix(cmd, "Instr")
+	cmd = strings.TrimPrefix(cmd, "instr")
+	cmd = strings.TrimPrefix(cmd, "Suggested Instruction")
+	cmd = strings.TrimPrefix(cmd, "Suggested instruction")
+	cmd = strings.TrimPrefix(cmd, "suggested instruction")
+	cmd = strings.TrimLeft(cmd, ": ")
+	return cmd
 }
 
 func (c *Chat) Revise(revision string) (string, error) {
-    c.messages = append(c.messages, ai.ChatCompletionMessage{
-        Role:    ai.ChatMessageRoleUser,
-        Content: revision,
-    })
+	c.messages = append(c.messages, ai.ChatCompletionMessage{
+		Role:    ai.ChatMessageRoleUser,
+		Content: revision,
+	})
 
 	cfmt.Printf("{{|}}::green Suggested command ")
 
 	sw := cli.NewStopWatch(time.Millisecond)
 	sw.Start()
 
-    resp, err := c.client.CreateChatCompletion(ctx2.Background(), ai.ChatCompletionRequest{
-        Model:       ai.GPT3Dot5Turbo16K,
-        Messages:    c.messages,
-        Temperature: 0.69,
-        N:           1,
-    })
-    if err != nil {
-        return "", err
-    }
+	resp, err := c.client.CreateChatCompletion(ctx2.Background(), ai.ChatCompletionRequest{
+		Model:       "gpt-4o",
+		Messages:    c.messages,
+		Temperature: 0.69,
+		N:           1,
+	})
+	if err != nil {
+		return "", err
+	}
 
-    sw.Stop()
-    c.messages = append(c.messages, resp.Choices[0].Message)
+	sw.Stop()
+	c.messages = append(c.messages, resp.Choices[0].Message)
 
 	fmt.Printf("\033[100m%s\033[0m\n", resp.Choices[0].Message.Content)
 
-    return resp.Choices[0].Message.Content, nil
+	return resp.Choices[0].Message.Content, nil
 }
 
 var SYSTEM_MESSAGE = ai.ChatCompletionMessage{
