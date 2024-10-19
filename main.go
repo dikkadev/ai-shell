@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/sett17/ai-shell/cexec"
-	"github.com/sett17/ai-shell/chat"
-	"github.com/sett17/ai-shell/cli"
-	"github.com/sett17/ai-shell/config"
-	"github.com/sett17/ai-shell/context"
-	"github.com/sett17/ai-shell/global"
+	"github.com/dikkadev/ai-shell/cexec"
+	"github.com/dikkadev/ai-shell/chat"
+	"github.com/dikkadev/ai-shell/cli"
+	"github.com/dikkadev/ai-shell/config"
+	"github.com/dikkadev/ai-shell/context"
+	"github.com/dikkadev/ai-shell/global"
 )
 
 func main() {

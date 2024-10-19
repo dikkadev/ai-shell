@@ -8,8 +8,8 @@ import (
 
 	"github.com/i582/cfmt/cmd/cfmt"
 	ai "github.com/sashabaranov/go-openai"
-	"github.com/sett17/ai-shell/cli"
-	"github.com/sett17/ai-shell/context"
+	"github.com/dikkadev/ai-shell/cli"
+	"github.com/dikkadev/ai-shell/context"
 )
 
 type Chat struct {

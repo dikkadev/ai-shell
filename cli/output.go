@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/sett17/ai-shell/global"
+	"github.com/dikkadev/ai-shell/global"
 	"github.com/i582/cfmt/cmd/cfmt"
 	"os"
 	"strings"

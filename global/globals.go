@@ -1,7 +1,7 @@
 package global
 
 import (
-    "github.com/sett17/ai-shell/config"
+    "github.com/dikkadev/ai-shell/config"
 )
 
 var Cfg = config.DEFAULT

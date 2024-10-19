@@ -1,4 +1,4 @@
-module github.com/sett17/ai-shell
+module github.com/dikkadev/ai-shell
 
 go 1.20
 

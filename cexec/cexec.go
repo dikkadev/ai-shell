@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/sett17/ai-shell/cli"
+	"github.com/dikkadev/ai-shell/cli"
 	"github.com/shirou/gopsutil/process"
 )
 

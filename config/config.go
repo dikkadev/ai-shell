@@ -7,7 +7,7 @@ import (
 
 	"github.com/kirsle/configdir"
 	"github.com/BurntSushi/toml"
-	"github.com/sett17/ai-shell/context"
+	"github.com/dikkadev/ai-shell/context"
 )
 
 type Config struct {

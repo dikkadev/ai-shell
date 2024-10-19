@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/sett17/ai-shell/cli"
+	"github.com/dikkadev/ai-shell/cli"
 )
 
 type CmdExecutor struct {

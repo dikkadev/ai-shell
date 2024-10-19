@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/i582/cfmt/cmd/cfmt"
-	"github.com/sett17/ai-shell/global"
+	"github.com/dikkadev/ai-shell/global"
 )
 
 type progArgFunction func(after string) error
